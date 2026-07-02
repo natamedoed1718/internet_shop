@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Контакты</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        h6 { color: gray; }
+
+        .col-3.bg-light {
+            background-color: #2c3e50 !important;
+            color: white;
+        }
+
+        .col-3.bg-light h2 {
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .col-3.bg-light .nav-link {
+            color: #ecf0f1 !important;
+            padding: 10px 15px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .col-3.bg-light .nav-link.active {
+            background-color: #34495e !important;
+            color: white !important;
+        }
+
+        .col-3.bg-light .nav-link:hover {
+            background-color: #34495e !important;
+            color: white !important;
+        }
+
+        .col-3.bg-light .btn-secondary {
+            background-color: #34495e !important;
+            border-color: #34495e !important;
+            color: white !important;
+        }
+
+        .col-3.bg-light .btn-secondary:hover {
+            background-color: #3d566e !important;
+        }
+
+        .col-3.bg-light .dropdown-menu {
+            background-color: #34495e;
+            border: none;
+        }
+
+        .col-3.bg-light .dropdown-item {
+            color: #ecf0f1;
+        }
+
+        .col-3.bg-light .dropdown-item:hover {
+            background-color: #3d566e;
+            color: white;
+        }
+
+        .form-card {
+            background-color: #e9ecef;
+            padding: 25px;
+            border-radius: 8px;
+            max-width: 500px;
+        }
+
+        .contacts-text {
+            text-align: justify;
+            line-height: 1.8;
+            color: #6c757d;
+            font-size: 16px;
+            max-width: 800px;
+        }
+
+        .contacts-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container-fluid">
+    <div class="row">
+
+        <!-- Меню слева -->
+        <div class="col-3 bg-light vh-100 d-flex flex-column p-3">
+            <h2>Меню</h2>
+            <ul class="nav flex-column">
+                <li class="nav-item"><a class="nav-link" href="/">Главная</a></li>
+                <li class="nav-item"><a class="nav-link" href="/">Категории</a></li>
+                <li class="nav-item"><a class="nav-link" href="/">Заказы</a></li>
+                <li class="nav-item"><a class="nav-link active" href="/">Контакты</a></li>
+            </ul>
+
+            <div class="mt-auto">
+                <div class="btn-group dropup w-100">
+                    <button class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown">
+                        Пользователь
+                    </button>
+                    <ul class="dropdown-menu w-100">
+                        <li><a class="dropdown-item" href="#">Профиль</a></li>
+                        <li><a class="dropdown-item" href="#">Выход</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Контент справа -->
+        <div class="col-9 bg-light vh-100 overflow-auto p-4">
+            <h1 class="text-center">Контакты</h1>
+            <br>
+
+            <h2 class="contacts-title">Наши контакты</h2>
+            <p class="contacts-text">
+                Это крупный и мощный североамериканский подвид бурого медведя, известный своей силой,
+                огромными размерами и агрессивным характером. Название «гризли» (от английского grizzly — седоватый,
+                серый) животное получило из-за особого окраса: темно-коричневая шерсть на спине и плечах имеет светлые,
+                серебристые кончики, что создает эффект седины.
+            </p>
+            <br>
+
+            <!-- ФОРМА С POST-ЗАПРОСОМ -->
+            <div class="form-card">
+                <form method="POST" action="/">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Имя</label>
+                        <input type="text" class="form-control" id="name" name="name" placeholder="Введите ваше имя" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Почта</label>
+                        <input type="email" class="form-control" id="email" name="email" placeholder="Введите вашу почту" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="message" class="form-label">Сообщение</label>
+                        <textarea class="form-control" id="message" name="message" rows="3" placeholder="Введите ваше сообщение" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Отправить</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
