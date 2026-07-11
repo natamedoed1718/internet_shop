@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Category, Product
+from .models import Category, Product, Contact
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
@@ -14,4 +14,10 @@ class ProductAdmin(admin.ModelAdmin):
     search_fields = ['name', 'description']  # поиск по name и description
     list_editable = ['price']  # возможность редактировать цену прямо в списке
     readonly_fields = ['created_at', 'updated_at']
+
+
+@admin.register(Contact)
+class ContactAdmin(admin.ModelAdmin):
+    list_display = ['name', 'email', 'phone']
+    search_fields = ['name', 'email']
 
