@@ -1,0 +1,51 @@
+<h2>Меню</h2>
+<ul class="nav flex-column">
+    <li class="nav-item">
+        <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}"
+           href="{% url 'catalog:home' %}">
+            Главная
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#">Категории</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#">Заказы</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {% if request.resolver_match.url_name == 'contacts' %}active{% endif %}"
+           href="{% url 'catalog:contacts' %}">
+            Контакты
+        </a>
+    </li>
+    {% if user.is_authenticated %}
+    <li class="nav-item">
+        <a class="nav-link {% if request.resolver_match.url_name == 'add_product' %}active{% endif %}"
+           href="{% url 'catalog:add_product' %}">
+             Добавить товар
+        </a>
+    </li>
+    {% endif %}
+</ul>
+
+<!-- Кнопка пользователя внизу -->
+<div class="mt-auto">
+    <div class="btn-group dropup w-100">
+        <button class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown">
+            {% if user.is_authenticated %}
+                {{ user.username }}
+            {% else %}
+                Пользователь
+            {% endif %}
+        </button>
+        <ul class="dropdown-menu w-100">
+            {% if user.is_authenticated %}
+                <li><a class="dropdown-item" href="#">Профиль</a></li>
+                <li><a class="dropdown-item" href="#">Выход</a></li>
+            {% else %}
+                <li><a class="dropdown-item" href="#">Войти</a></li>
+                <li><a class="dropdown-item" href="#">Регистрация</a></li>
+            {% endif %}
+        </ul>
+    </div>
+</div>
