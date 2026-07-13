@@ -8,7 +8,7 @@ class Command(BaseCommand):
     help = 'Загружает тестовые данные из фикстур'
 
     def handle(self, *args, **options):
-        self.stdout.write(self.style.WARNING('🗑️ Удаление существующих данных...'))
+        self.stdout.write(self.style.WARNING('Удаление существующих данных...'))
 
         # Удаляем все данные
         Product.objects.all().delete()
@@ -52,6 +52,6 @@ class Command(BaseCommand):
                     category=category,
                     price=fields['price'],
                 )
-                self.stdout.write(f' Создан продукт: {product.name}')
+                self.stdout.write(f'Создан продукт: {product.name}')
 
-        self.stdout.write(self.style.SUCCESS('🎉 Данные успешно загружены!'))
+        self.stdout.write(self.style.SUCCESS('Данные успешно загружены!'))
