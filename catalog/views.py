@@ -5,18 +5,8 @@ from .models import Product, Category, Contact
 
 def home(request):
     """Контроллер для отображения домашней страницы."""
-    products = Product.objects.all()[:6]
+    products = Product.objects.all()
     categories = Category.objects.all()
-
-    # Последние 5 продуктов (для вывода в консоль)
-    latest_products = Product.objects.all().order_by('-created_at')[:5]
-
-    print("\n" + "=" * 50)
-    print("Последние 5 созданных продуктов:")
-    print("=" * 50)
-    for product in latest_products:
-        print(f"• {product.name} (${product.price}) - {product.category.name}")
-    print("=" * 50 + "\n")
 
     context = {
         'products': products,
