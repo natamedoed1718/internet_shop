@@ -1,0 +1,25 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}Удалить запись{% endblock %}
+
+{% block content %}
+<h1 class="text-center mb-4">Удалить запись</h1>
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card border-danger">
+            <div class="card-body text-center">
+                <h5 class="card-title text-danger">Вы уверены, что хотите удалить эту запись?</h5>
+                <p class="card-text"><strong>{{ post.title }}</strong></p>
+                <p class="text-muted">{{ post.created_at|date:"d.m.Y H:i" }}</p>
+
+                <form method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Да, удалить</button>
+                    <a href="{% url 'blog:blog_detail' post.pk %}" class="btn btn-secondary">Отмена</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
