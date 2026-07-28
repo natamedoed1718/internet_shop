@@ -1,153 +1,89 @@
-<!doctype html>
-<html lang="ru">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Главная - Интернет-магазин</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        /* ТЕМНОЕ МЕНЮ */
-        .col-3.bg-dark-custom {
-            background-color: #2c3e50 !important;
-            color: white;
-            min-height: 100vh;
-        }
+{% extends 'catalog/base.html' %}
 
-        .col-3.bg-dark-custom h2 {
-            color: white;
-            margin-bottom: 30px;
-        }
+{% block title %}Главная - Интернет-магазин{% endblock %}
 
-        .col-3.bg-dark-custom .nav-link {
-            color: #ecf0f1 !important;
-            padding: 10px 15px;
-            border-radius: 5px;
-            transition: background-color 0.3s;
-        }
+{% block content %}
+<h1 class="text-center">Главная</h1>
+<h6 class="text-center text-muted">Вы находитесь на сайте, предназначенном для продажи товаров.</h6>
+<br>
 
-        .col-3.bg-dark-custom .nav-link.active {
-            background-color: #34495e !important;
-            color: white !important;
-        }
-
-        .col-3.bg-dark-custom .nav-link:hover {
-            background-color: #34495e !important;
-            color: white !important;
-        }
-
-        .col-3.bg-dark-custom .btn-secondary {
-            background-color: #34495e !important;
-            border-color: #34495e !important;
-            color: white !important;
-        }
-
-        .col-3.bg-dark-custom .btn-secondary:hover {
-            background-color: #3d566e !important;
-        }
-
-        .col-3.bg-dark-custom .dropdown-menu {
-            background-color: #34495e;
-            border: none;
-        }
-
-        .col-3.bg-dark-custom .dropdown-item {
-            color: #ecf0f1;
-        }
-
-        .col-3.bg-dark-custom .dropdown-item:hover {
-            background-color: #3d566e;
-            color: white;
-        }
-
-        .card {
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            transition: transform 0.2s;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        }
-    </style>
-</head>
-<body>
-
-<div class="container-fluid">
-    <div class="row">
-
-        <!-- Меню слева -->
-        <div class="col-3 bg-dark-custom d-flex flex-column p-3">
-            <h2>Меню</h2>
-            <ul class="nav flex-column">
-                <li class="nav-item"><a class="nav-link active" href="{% url 'catalog:home' %}">Главная</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Категории</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Заказы</a></li>
-                <li class="nav-item"><a class="nav-link" href="{% url 'catalog:contacts' %}">Контакты</a></li>
-            </ul>
-
-            <!-- Кнопка пользователя внизу -->
-            <div class="mt-auto">
-                <div class="btn-group dropup w-100">
-                    <button class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown">
-                        Пользователь
-                    </button>
-                    <ul class="dropdown-menu w-100">
-                        <li><a class="dropdown-item" href="#">Профиль</a></li>
-                        <li><a class="dropdown-item" href="#">Выход</a></li>
-                    </ul>
+<!-- Карточки товаров -->
+<div class="row row-cols-1 row-cols-md-3 g-4">
+    {% for product in products %}
+    <div class="col">
+        <div class="card product-card">
+            {% if product.image %}
+            <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
+            {% else %}
+            <div class="card-img-top d-flex align-items-center justify-content-center text-secondary bg-light" style="height: 200px;">
+                Нет изображения
+            </div>
+            {% endif %}
+            <div class="card-body d-flex flex-column">
+                <h5 class="card-title">{{ product.name }}</h5>
+                <p class="text-muted small">{{ product.category.name }}</p>
+                <p class="card-text flex-grow-1">{{ product.description|truncatechars:100 }}</p>
+                <div class="d-flex justify-content-between align-items-center mt-2">
+                    <span class="product-price">${{ product.price }}</span>
+                    <a href="{% url 'catalog:product_detail' product.pk %}" class="btn btn-primary btn-sm">
+                        Подробнее →
+                    </a>
                 </div>
             </div>
         </div>
-
-        <!-- Контент справа -->
-        <div class="col-9 bg-light vh-100 overflow-auto p-4">
-            <h1 class="text-center">Главная</h1>
-            <h6 class="text-center text-muted">Вы находитесь на сайте, предназначенном для продажи товаров.</h6>
-            <br>
-
-            <!-- Карточки товаров -->
-            <div class="d-flex flex-wrap justify-content-center gap-3">
-
-                <div class="card" style="width: 18rem;">
-                    <div class="card-body">
-                        <h5 class="text-center">Товар 1</h5>
-                        <h3 class="text-center">$100</h3>
-                        <p class="text-center">10 users included, 2 GB of storage,<br>Email support, Help center access</p>
-                        <div class="text-center">
-                            <a href="#" class="btn btn-primary">Купить</a>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card" style="width: 18rem;">
-                    <div class="card-body">
-                        <h5 class="text-center">Товар 2</h5>
-                        <h3 class="text-center">$200</h3>
-                        <p class="text-center">20 users included, 5 GB of storage,<br>Email support, Help center access</p>
-                        <div class="text-center">
-                            <a href="#" class="btn btn-primary">Купить</a>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card" style="width: 18rem;">
-                    <div class="card-body">
-                        <h5 class="text-center">Товар 3</h5>
-                        <h3 class="text-center">$300</h3>
-                        <p class="text-center">50 users included, 10 GB of storage,<br>Email support, Help center access</p>
-                        <div class="text-center">
-                            <a href="#" class="btn btn-primary">Купить</a>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-
     </div>
+    {% empty %}
+    <div class="col-12 text-center">
+        <p class="text-muted">Товары пока не добавлены</p>
+    </div>
+    {% endfor %}
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+<!-- Пагинация -->
+{% if products.has_other_pages %}
+<nav aria-label="Page navigation" class="mt-4">
+    <ul class="pagination justify-content-center">
+        {% if products.has_previous %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ products.previous_page_number }}">«</a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <span class="page-link">«</span>
+        </li>
+        {% endif %}
+
+        {% for num in products.paginator.page_range %}
+            {% if products.number == num %}
+            <li class="page-item active">
+                <span class="page-link">{{ num }}</span>
+            </li>
+            {% elif num > products.number|add:'-3' and num < products.number|add:'3' %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+            </li>
+            {% endif %}
+        {% endfor %}
+
+        {% if products.has_next %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ products.next_page_number }}">»</a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <span class="page-link">»</span>
+        </li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
+
+<!-- Кнопка "Добавить товар" (для админов) -->
+{% if user.is_staff %}
+<div class="text-center mt-4">
+    <a href="{% url 'catalog:add_product' %}" class="btn btn-success">
+        ➕ Добавить новый товар
+    </a>
+</div>
+{% endif %}
+{% endblock %}
