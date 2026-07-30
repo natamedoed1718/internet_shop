@@ -1,69 +1,103 @@
-from django.shortcuts import render, get_object_or_404, redirect
+from django.views.generic import ListView, DetailView
+from django.shortcuts import redirect, render
 from django.contrib import messages
+from django.views import View
 from .models import Product, Category, Contact
 
 
-def home(request):
-    """Контроллер для отображения домашней страницы."""
-    products = Product.objects.all()
-    categories = Category.objects.all()
+class HomeView(ListView):
+    """
+    Контроллер для отображения домашней страницы.
+    Заменяет FBV home()
+    """
+    model = Product
+    template_name = 'catalog/home.html'
+    context_object_name = 'products'
 
-    context = {
-        'products': products,
-        'categories': categories,
-    }
-    return render(request, 'catalog/home.html', context)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['categories'] = Category.objects.all()
+        return context
 
 
-def contacts(request):
-    """Контроллер для отображения страницы контактов."""
-    success = False
+class ContactsView(View):
+    """
+    Контроллер для отображения страницы контактов.
+    Заменяет FBV contacts()
+    """
 
-    if request.method == 'POST':
+    def get(self, request):
+        """GET-запрос: отображаем страницу с формой."""
+        success = False
+        contacts_data = Contact.objects.all()
+
+        context = {
+            'success': success,
+            'contacts': contacts_data,
+        }
+        return render(request, 'catalog/contacts.html', context)
+
+    def post(self, request):
+        """POST-запрос: сохраняем данные из формы."""
         name = request.POST.get('name')
         email = request.POST.get('email')
         message = request.POST.get('message')
 
+        # Создаем запись в базе данных
         Contact.objects.create(
             name=name,
             email=email,
             phone='',
             address=message
         )
+
         success = True
+        contacts_data = Contact.objects.all()
 
-    contacts_data = Contact.objects.all()
-
-    context = {
-        'success': success,
-        'contacts': contacts_data,
-    }
-    return render(request, 'catalog/contacts.html', context)
+        context = {
+            'success': success,
+            'contacts': contacts_data,
+        }
+        return render(request, 'catalog/contacts.html', context)
 
 
-def product_detail(request, pk):
+class ProductDetailView(DetailView):
     """
-    Детальная страница товара, получает pk, извлекает объект через ORM и передает его в шаблон
+    Детальная страница товара с рекомендациями.
+    Заменяет FBV product_detail()
     """
-    product = get_object_or_404(Product, pk=pk)
+    model = Product
+    template_name = 'catalog/product_detail.html'
+    context_object_name = 'product'
 
-    # Рекомендуемые товары (из той же категории)
-    related_products = Product.objects.filter(
-        category=product.category
-    ).exclude(pk=product.pk)[:4]
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        product = self.get_object()
 
-    context = {
-        'product': product,
-        'related_products': related_products,
-    }
-    return render(request, 'catalog/product_detail.html', context)
+        # Рекомендуемые товары (из той же категории)
+        related_products = Product.objects.filter(
+            category=product.category
+        ).exclude(pk=product.pk)[:4]
+
+        context['related_products'] = related_products
+        return context
 
 
-def add_product(request):
-    """Страница с формой для добавления нового товара"""
-    categories = Category.objects.all()
+class AddProductView(View):
+    """
+    Страница с формой для добавления нового товара.
+    Заменяет FBV add_product()
+    """
 
-    if request.method == 'POST':
+    def get(self, request):
+        """GET-запрос: показываем пустую форму."""
+        categories = Category.objects.all()
+        return render(request, 'catalog/add_product.html', {'categories': categories})
+
+    def post(self, request):
+        """POST-запрос: обрабатываем данные формы и сохраняем товар."""
+        categories = Category.objects.all()
+
         # Получаем данные из формы
         name = request.POST.get('name')
         description = request.POST.get('description')
@@ -104,7 +138,10 @@ def add_product(request):
             messages.error(request, 'Выберите существующую категорию!')
 
         # Если была ошибка, возвращаем форму с ошибками
-        return render(request, 'catalog/add_product.html', {'categories': categories})
-
-    # GET-запрос — показываем пустую форму
-    return render(request, 'catalog/add_product.html', {'categories': categories})
+        return render(request, 'catalog/add_product.html', {
+            'categories': categories,
+            'name': name,
+            'description': description,
+            'price': price,
+            'category_id': category_id,
+        })
