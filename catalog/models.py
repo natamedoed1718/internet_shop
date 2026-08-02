@@ -1,57 +1,60 @@
 from django.db import models
 
+
 class Category(models.Model):
-    """Модель категории товаров"""
-    name = models.CharField(max_length=100, verbose_name="Наименование")
-    description = models.TextField(blank=True, verbose_name="Описание")
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
-    updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата последнего изменения")
+    """Модель категории товаров."""
+    name = models.CharField(max_length=100, verbose_name='Название')
+    description = models.TextField(blank=True, null=True, verbose_name='Описание')
 
     def __str__(self):
         return self.name
 
     class Meta:
-        verbose_name = "Категория"
-        verbose_name_plural = "Категории"
-        ordering = ['name']
+        verbose_name = 'Категория'
+        verbose_name_plural = 'Категории'
 
 
 class Product(models.Model):
-    """Модель товара"""
-    name = models.CharField(max_length=200, verbose_name="Наименование")
-    description = models.TextField(verbose_name="Описание")
-    image = models.ImageField(upload_to='products/', blank=True, null=True, verbose_name="Изображение")
+    """Модель товара."""
+    name = models.CharField(max_length=200, verbose_name='Название')
+    description = models.TextField(verbose_name='Описание')
+    price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Цена')
     category = models.ForeignKey(
         Category,
         on_delete=models.CASCADE,
-        related_name='products',
-        verbose_name="Категория"
+        verbose_name='Категория',
+        related_name='products'
     )
-    price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Цена за покупку")
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
-    updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата последнего изменения")
+    image = models.ImageField(
+        upload_to='products/',
+        blank=True,
+        null=True,
+        verbose_name='Изображение'
+    )
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')
 
     def __str__(self):
         return self.name
 
     class Meta:
-        verbose_name = "Продукт"
-        verbose_name_plural = "Продукты"
+        verbose_name = 'Товар'
+        verbose_name_plural = 'Товары'
         ordering = ['-created_at']
 
 
 class Contact(models.Model):
-    """Модель для хранения контактных данных"""
-    name = models.CharField(max_length=100, verbose_name="Имя")
-    email = models.EmailField(verbose_name="Email")
-    phone = models.CharField(max_length=20, verbose_name="Телефон")
-    address = models.TextField(verbose_name="Адрес")
-    created_at = models.DateTimeField(auto_now_add=True)
+    """Модель для обратной связи."""
+    name = models.CharField(max_length=100, verbose_name='Имя')
+    email = models.EmailField(verbose_name='Email')
+    phone = models.CharField(max_length=20, blank=True, verbose_name='Телефон')
+    address = models.TextField(verbose_name='Сообщение')
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')
 
     def __str__(self):
-        return self.name
+        return f"{self.name} - {self.email}"
 
     class Meta:
-        verbose_name = "Контакт"
-        verbose_name_plural = "Контакты"
+        verbose_name = 'Контакт'
+        verbose_name_plural = 'Контакты'
+        ordering = ['-created_at']
 

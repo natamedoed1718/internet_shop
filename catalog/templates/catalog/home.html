@@ -1,89 +1,21 @@
-{% extends 'catalog/base.html' %}
-
-{% block title %}Главная - Интернет-магазин{% endblock %}
-
-{% block content %}
-<h1 class="text-center">Главная</h1>
-<h6 class="text-center text-muted">Вы находитесь на сайте, предназначенном для продажи товаров.</h6>
-<br>
-
-<!-- Карточки товаров -->
-<div class="row row-cols-1 row-cols-md-3 g-4">
-    {% for product in products %}
-    <div class="col">
-        <div class="card product-card">
-            {% if product.image %}
-            <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
-            {% else %}
-            <div class="card-img-top d-flex align-items-center justify-content-center text-secondary bg-light" style="height: 200px;">
-                Нет изображения
-            </div>
-            {% endif %}
-            <div class="card-body d-flex flex-column">
-                <h5 class="card-title">{{ product.name }}</h5>
-                <p class="text-muted small">{{ product.category.name }}</p>
-                <p class="card-text flex-grow-1">{{ product.description|truncatechars:100 }}</p>
-                <div class="d-flex justify-content-between align-items-center mt-2">
-                    <span class="product-price">${{ product.price }}</span>
-                    <a href="{% url 'catalog:product_detail' product.pk %}" class="btn btn-primary btn-sm">
-                        Подробнее →
-                    </a>
-                </div>
-            </div>
+<!-- В карточке товара добавь кнопки управления -->
+<div class="card" style="width: 18rem;">
+    {% if product.image %}
+    <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
+    {% else %}
+    <div class="card-img-top bg-secondary d-flex align-items-center justify-content-center">
+        <span class="text-white">Нет изображения</span>
+    </div>
+    {% endif %}
+    <div class="card-body">
+        <h5 class="card-title text-center">{{ product.name }}</h5>
+        <p class="text-muted text-center small">{{ product.category.name }}</p>
+        <h3 class="text-center">${{ product.price }}</h3>
+        <p class="text-center">{{ product.description|truncatewords:15 }}</p>
+        <div class="text-center">
+            <a href="{% url 'catalog:product_detail' product.pk %}" class="btn btn-primary btn-sm">Подробнее</a>
+            <a href="{% url 'catalog:update_product' product.pk %}" class="btn btn-warning btn-sm">✏️</a>
+            <a href="{% url 'catalog:delete_product' product.pk %}" class="btn btn-danger btn-sm">🗑️</a>
         </div>
     </div>
-    {% empty %}
-    <div class="col-12 text-center">
-        <p class="text-muted">Товары пока не добавлены</p>
-    </div>
-    {% endfor %}
 </div>
-
-<!-- Пагинация -->
-{% if products.has_other_pages %}
-<nav aria-label="Page navigation" class="mt-4">
-    <ul class="pagination justify-content-center">
-        {% if products.has_previous %}
-        <li class="page-item">
-            <a class="page-link" href="?page={{ products.previous_page_number }}">«</a>
-        </li>
-        {% else %}
-        <li class="page-item disabled">
-            <span class="page-link">«</span>
-        </li>
-        {% endif %}
-
-        {% for num in products.paginator.page_range %}
-            {% if products.number == num %}
-            <li class="page-item active">
-                <span class="page-link">{{ num }}</span>
-            </li>
-            {% elif num > products.number|add:'-3' and num < products.number|add:'3' %}
-            <li class="page-item">
-                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
-            </li>
-            {% endif %}
-        {% endfor %}
-
-        {% if products.has_next %}
-        <li class="page-item">
-            <a class="page-link" href="?page={{ products.next_page_number }}">»</a>
-        </li>
-        {% else %}
-        <li class="page-item disabled">
-            <span class="page-link">»</span>
-        </li>
-        {% endif %}
-    </ul>
-</nav>
-{% endif %}
-
-<!-- Кнопка "Добавить товар" (для админов) -->
-{% if user.is_staff %}
-<div class="text-center mt-4">
-    <a href="{% url 'catalog:add_product' %}" class="btn btn-success">
-        ➕ Добавить новый товар
-    </a>
-</div>
-{% endif %}
-{% endblock %}
