@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'catalog',
     'blog',
+    'users',
 ]
 
 MIDDLEWARE = [
@@ -117,13 +118,29 @@ USE_I18N = True
 
 USE_TZ = True
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/6.0/howto/static-files/
+# Настройка кастомной модели пользователя
+AUTH_USER_MODEL = 'users.User'
 
+# Настройки почты для отправки писем
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'  # или ваш SMTP-сервер
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'your-email@gmail.com'  # ваш email
+EMAIL_HOST_PASSWORD = 'your-password'  # ваш пароль
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
-# Настройки для загрузки изображений
-MEDIA_URL = '/media/'  # URL для доступа к медиафайлам
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # Папка для хранения загруженных файлов
+# Для разработки можно использовать консольный бэкенд
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# Настройки медиа-файлов
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# URL для логина
+LOGIN_URL = 'users:login'
+LOGIN_REDIRECT_URL = 'catalog:home'
+LOGOUT_REDIRECT_URL = 'catalog:home'
 
 # Для статики (CSS, JS)
 STATIC_URL = '/static/'

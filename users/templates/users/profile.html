@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Профиль</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            padding-top: 50px;
+        }
+        .profile-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .card {
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .card-header {
+            background: #2c3e50;
+            color: white;
+            border-radius: 15px 15px 0 0;
+            padding: 20px;
+        }
+        .avatar-preview {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #2c3e50;
+            margin: 0 auto 20px;
+            display: block;
+        }
+        .errorlist {
+            color: #dc3545;
+            list-style: none;
+            padding: 0;
+            margin: 5px 0 0 0;
+            font-size: 0.875rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="profile-container">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="mb-0">👤 Профиль</h3>
+                </div>
+                <div class="card-body p-4">
+
+                    {% if messages %}
+                        {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <!-- Аватар -->
+                    {% if user.avatar %}
+                    <img src="{{ user.avatar.url }}" alt="Аватар" class="avatar-preview">
+                    {% else %}
+                    <div class="avatar-preview bg-secondary d-flex align-items-center justify-content-center text-white">
+                        <span style="font-size: 60px;">👤</span>
+                    </div>
+                    {% endif %}
+
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.first_name.id_for_label }}" class="form-label">Имя</label>
+                                {{ form.first_name }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.last_name.id_for_label }}" class="form-label">Фамилия</label>
+                                {{ form.last_name }}
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.avatar.id_for_label }}" class="form-label">Аватар</label>
+                            {{ form.avatar }}
+                            <div class="form-text">Разрешены форматы: JPEG, PNG. Максимальный размер: 5 МБ</div>
+                            {% if form.avatar.errors %}
+                            <ul class="errorlist">
+                                {% for error in form.avatar.errors %}
+                                <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.phone.id_for_label }}" class="form-label">Номер телефона</label>
+                            {{ form.phone }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.country.id_for_label }}" class="form-label">Страна</label>
+                            {{ form.country }}
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">Сохранить</button>
+                            <a href="{% url 'catalog:home' %}" class="btn btn-secondary">На главную</a>
+                            <a href="{% url 'users:logout' %}" class="btn btn-danger">Выйти</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
