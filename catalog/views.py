@@ -1,15 +1,16 @@
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from django.shortcuts import redirect, get_object_or_404
 from django.contrib import messages
 from django.urls import reverse_lazy
-from django.views import View
 from django.shortcuts import render
 from .models import Product, Category, Contact
 from .forms import ProductForm
+from django.views import View
 
 
 class HomeView(ListView):
-    """Контроллер для отображения домашней страницы."""
+    """Главная страница - доступна всем."""
     model = Product
     template_name = 'catalog/home.html'
     context_object_name = 'products'
@@ -20,18 +21,32 @@ class HomeView(ListView):
         return context
 
 
+class ProductDetailView(DetailView):
+    """Детальная страница товара - доступна всем."""
+    model = Product
+    template_name = 'catalog/product_detail.html'
+    context_object_name = 'product'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        product = self.get_object()
+        related_products = Product.objects.filter(
+            category=product.category
+        ).exclude(pk=product.pk)[:4]
+        context['related_products'] = related_products
+        return context
+
+
 class ContactsView(View):
-    """Контроллер для отображения страницы контактов."""
+    """Страница контактов - доступна всем."""
 
     def get(self, request):
         success = False
         contacts_data = Contact.objects.all()
-
-        context = {
+        return render(request, 'catalog/contacts.html', {
             'success': success,
             'contacts': contacts_data,
-        }
-        return render(request, 'catalog/contacts.html', context)
+        })
 
     def post(self, request):
         name = request.POST.get('name')
@@ -45,62 +60,39 @@ class ContactsView(View):
             address=message
         )
 
-        success = True
-        contacts_data = Contact.objects.all()
-
-        context = {
-            'success': success,
-            'contacts': contacts_data,
-        }
-        return render(request, 'catalog/contacts.html', context)
+        return render(request, 'catalog/contacts.html', {
+            'success': True,
+            'contacts': Contact.objects.all(),
+        })
 
 
-class ProductDetailView(DetailView):
-    """Детальная страница товара с рекомендациями."""
-    model = Product
-    template_name = 'catalog/product_detail.html'
-    context_object_name = 'product'
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        product = self.get_object()
-
-        related_products = Product.objects.filter(
-            category=product.category
-        ).exclude(pk=product.pk)[:4]
-
-        context['related_products'] = related_products
-        return context
+# CRUD для продуктов - ТОЛЬКО ДЛЯ АВТОРИЗОВАННЫХ
 
 
+@method_decorator(login_required, name='dispatch')
 class ProductCreateView(CreateView):
-    """
-    Создание нового товара с использованием формы.
-    Заменяет FBV add_product()
-    """
+    """Создание товара - только для авторизованных."""
     model = Product
     form_class = ProductForm
     template_name = 'catalog/add_product.html'
     success_url = reverse_lazy('catalog:home')
 
     def form_valid(self, form):
-        """Добавляем сообщение об успехе."""
         response = super().form_valid(form)
         messages.success(self.request, f'Товар "{self.object.name}" успешно добавлен!')
         return response
 
     def form_invalid(self, form):
-        """Добавляем сообщения об ошибках."""
         for field, errors in form.errors.items():
             for error in errors:
                 messages.error(self.request, f'{error}')
         return super().form_invalid(form)
 
 
+@method_decorator(login_required, name='dispatch')
 class ProductUpdateView(UpdateView):
-    """
-    Редактирование товара с использованием формы.
-    """
+    """Редактирование товара - только для авторизованных."""
     model = Product
     form_class = ProductForm
     template_name = 'catalog/update_product.html'
@@ -120,10 +112,9 @@ class ProductUpdateView(UpdateView):
         return super().form_invalid(form)
 
 
+@method_decorator(login_required, name='dispatch')
 class ProductDeleteView(DeleteView):
-    """
-    Удаление товара.
-    """
+    """Удаление товара - только для авторизованных."""
     model = Product
     template_name = 'catalog/product_confirm_delete.html'
     success_url = reverse_lazy('catalog:home')

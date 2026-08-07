@@ -21,14 +21,22 @@
 
     <!-- Кнопка пользователя внизу -->
     <div class="mt-auto">
-        <div class="btn-group dropup w-100">
-            <button class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown">
-                Пользователь
-            </button>
-            <ul class="dropdown-menu w-100">
-                <li><a class="dropdown-item" href="#">Профиль</a></li>
-                <li><a class="dropdown-item" href="#">Выход</a></li>
-            </ul>
-        </div>
+        {% if user.is_authenticated %}
+            <div class="btn-group dropup w-100">
+                <button class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown">
+                    👤 {{ user.email }}
+                </button>
+                <ul class="dropdown-menu w-100">
+                    <li><a class="dropdown-item" href="{% url 'users:profile' %}">Профиль</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item text-danger" href="{% url 'users:logout' %}">Выход</a></li>
+                </ul>
+            </div>
+        {% else %}
+            <div class="d-grid gap-2">
+                <a href="{% url 'users:login' %}" class="btn btn-success">Войти</a>
+                <a href="{% url 'users:register' %}" class="btn btn-outline-light">Регистрация</a>
+            </div>
+        {% endif %}
     </div>
 </div>
